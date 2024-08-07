@@ -1,0 +1,16 @@
+FROM apache/kafka:latest
+
+ENV KAFKA_NODE_ID=1 \
+    KAFKA_PROCESS_ROLES=broker,controller \
+    KAFKA_CONTROLLER_QUORUM_VOTERS=1@kafka-1:9093,2@kafka-2:9093,3@kafka-3:9093 \
+    KAFKA_LISTENERS=CONTROLLER=//:9093,PLAINTEXT://:9092 \
+    KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT \
+    KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092 \
+    KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER \
+    KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+
+EXPOSE 9092 9093
+
+WORKDIR /opt/kafka/config
+
+CMD ["sh", "-c", "/opt/kafka/bin/kafka-server-start.sh server.properties --override log.dirs=/opt/kafka/logs/"]
